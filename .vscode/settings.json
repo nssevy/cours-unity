@@ -67,5 +67,5 @@
         "*.sln": "*.csproj",
         "*.slnx": "*.csproj"
     },
-    "dotnet.defaultSolution": "s4-cours-unity.slnx"
+    "dotnet.defaultSolution": "cours-unity.slnx"
 }
