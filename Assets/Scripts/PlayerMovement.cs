@@ -2,9 +2,17 @@ using UnityEngine;
 
 public class PlayerMovement : MonoBehaviour // Correction de l'orthographe (Mouvement -> Movement)
 {
+
+    [SerializeField]
+    private int nbMaxJumpsAllowed = 2;
+
+    [SerializeField]
+    private int nbJumps = 0;
+
     [SerializeField] private Rigidbody2D rb;
+
     [SerializeField] private float moveSpeed = 10f; // Utilisation d'un float pour la précision
-    
+
     private float moveDirectionX;
 
     [SerializeField]
@@ -27,14 +35,17 @@ public class PlayerMovement : MonoBehaviour // Correction de l'orthographe (Mouv
 
     private bool isFacingRight = true;
 
+    private bool wasGrounded = false;
+
     private bool IsTouchingGround()
-{
-    return Physics2D.OverlapCircle(
-        groundCheck.position,
-        groundCheckRadius,
-        listGroundLayers
-    );
-}
+    {
+        return Physics2D.OverlapCircle(
+            groundCheck.position,
+            groundCheckRadius,
+            listGroundLayers
+        );
+    }
+
     void Update()
     {
         // On récupère l'input dans le Update pour plus de réactivité
@@ -43,22 +54,47 @@ public class PlayerMovement : MonoBehaviour // Correction de l'orthographe (Mouv
         {
             jumpRequested = true;
         }
-        
-        if(Input.GetButtonUp("Jump"))
+
+        if (Input.GetButtonUp("Jump"))
         {
             jumpReleased = true;
         }
+
+
+
+
+        if (isGrounded)
+        {
+            nbJumps = 0;
+        }
+
         flip();
+
+        if (isGrounded && !wasGrounded)
+        {
+            nbJumps = 0;
+        }
+
+        wasGrounded = isGrounded;
     }
 
     private void FixedUpdate()
+
     {
         // Les calculs physiques se font toujours dans FixedUpdate
         Move();
         isGrounded = IsTouchingGround();
-        
 
         if (jumpRequested && isGrounded)
+        {
+            Jump();
+        }
+
+        if (
+            nbJumps < nbMaxJumpsAllowed &&
+            jumpRequested
+        )
+
         {
             Jump();
         }
@@ -73,22 +109,22 @@ public class PlayerMovement : MonoBehaviour // Correction de l'orthographe (Mouv
 
         jumpRequested = false;
         jumpReleased = false;
+
     }
 
     private void Jump()
     {
-        rb.linearVelocity = new Vector2(
-            rb.linearVelocityX,
-            jumpForce
-        );
+        nbJumps += 1;
+        rb.linearVelocity = new Vector2(rb.linearVelocityX, jumpForce);
     }
 
     private void flip()
     {
-        if (moveDirectionX > 0 && !isFacingRight || moveDirectionX < 0 && isFacingRight){
+        if (moveDirectionX > 0 && !isFacingRight || moveDirectionX < 0 && isFacingRight)
+        {
             isFacingRight = !isFacingRight;
             Vector3 localScale = transform.localScale;
-            localScale.x *=-1;
+            localScale.x *= -1;
             transform.localScale = localScale;
         }
     }
