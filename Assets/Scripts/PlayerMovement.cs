@@ -2,15 +2,7 @@ using UnityEngine;
 
 public class PlayerMovement : MonoBehaviour // Correction de l'orthographe (Mouvement -> Movement)
 {
-
-    [SerializeField]
-    private int nbMaxJumpsAllowed = 2;
-
-    [SerializeField]
-    private int nbJumps = 0;
-
     [SerializeField] private Rigidbody2D rb;
-
     [SerializeField] private float moveSpeed = 10f; // Utilisation d'un float pour la précision
 
     private float moveDirectionX;
@@ -34,7 +26,10 @@ public class PlayerMovement : MonoBehaviour // Correction de l'orthographe (Mouv
     private bool jumpReleased = false;
 
     private bool isFacingRight = true;
-
+    [SerializeField]
+    private int nbMaxJumpsAllowed = 2;
+    [SerializeField]
+    private int nbJumps = 0;
     private bool wasGrounded = false;
 
     private bool IsTouchingGround()
@@ -45,7 +40,6 @@ public class PlayerMovement : MonoBehaviour // Correction de l'orthographe (Mouv
             listGroundLayers
         );
     }
-
     void Update()
     {
         // On récupère l'input dans le Update pour plus de réactivité
@@ -59,45 +53,27 @@ public class PlayerMovement : MonoBehaviour // Correction de l'orthographe (Mouv
         {
             jumpReleased = true;
         }
-
-
-
-
-        if (isGrounded)
-        {
-            nbJumps = 0;
-        }
-
         flip();
+        // Update
 
         if (isGrounded && !wasGrounded)
         {
             nbJumps = 0;
         }
-
         wasGrounded = isGrounded;
+
     }
 
     private void FixedUpdate()
-
     {
+        if (nbJumps < nbMaxJumpsAllowed && jumpRequested)
+        {
+            Jump();
+        }
         // Les calculs physiques se font toujours dans FixedUpdate
         Move();
         isGrounded = IsTouchingGround();
 
-        if (jumpRequested && isGrounded)
-        {
-            Jump();
-        }
-
-        if (
-            nbJumps < nbMaxJumpsAllowed &&
-            jumpRequested
-        )
-
-        {
-            Jump();
-        }
 
         if (jumpReleased && rb.linearVelocityY > 0)
         {
@@ -109,13 +85,15 @@ public class PlayerMovement : MonoBehaviour // Correction de l'orthographe (Mouv
 
         jumpRequested = false;
         jumpReleased = false;
-
     }
 
     private void Jump()
     {
-        nbJumps += 1;
-        rb.linearVelocity = new Vector2(rb.linearVelocityX, jumpForce);
+        rb.linearVelocity = new Vector2(
+            rb.linearVelocityX,
+            jumpForce
+        );
+        nbJumps++;
     }
 
     private void flip()
@@ -144,5 +122,5 @@ public class PlayerMovement : MonoBehaviour // Correction de l'orthographe (Mouv
             );
         }
     }
-}
 
+}
