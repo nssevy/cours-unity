@@ -40,6 +40,10 @@ public class PlayerMovement : MonoBehaviour // Correction de l'orthographe (Mouv
             listGroundLayers
         );
     }
+
+    [SerializeField]
+    private Animator animator;
+
     void Update()
     {
         // On récupère l'input dans le Update pour plus de réactivité
@@ -60,6 +64,9 @@ public class PlayerMovement : MonoBehaviour // Correction de l'orthographe (Mouv
         {
             nbJumps = 0;
         }
+
+        Animations();
+
         wasGrounded = isGrounded;
 
     }
@@ -121,6 +128,14 @@ public class PlayerMovement : MonoBehaviour // Correction de l'orthographe (Mouv
                 groundCheckRadius
             );
         }
+    }
+
+    void Animations()
+    // on va gerer toutes les animations ici
+    {
+        animator.SetFloat("VelocityX", Mathf.Abs(rb.linearVelocityX));
+        animator.SetFloat("VelocityY", rb.linearVelocityY);
+        animator.SetBool("isGrounded", isGrounded);
     }
 
 }

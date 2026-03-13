@@ -5,13 +5,13 @@ public class Enemy : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        
+
     }
 
     // Update is called once per frame
     void Update()
     {
-        
+
     }
 
     void OnCollisionEnter2D(Collision2D collision)
@@ -31,6 +31,13 @@ public class Enemy : MonoBehaviour
                 bounce,
                 ForceMode2D.Impulse);
             Die();
+            // Si on saute sur l'énnemie alors l'énnemie est éliminé
+        }
+        else
+        {
+            playerVie playerVie = collision.gameObject.GetComponent<playerVie>();
+            playerVie.TakeDamage();
+            // Sinon l'énnemie nous fais des dégats
         }
     }
 
